@@ -1,7 +1,7 @@
 # Final-Project-Group8
 Group Project of DATS6103 Data Mining
 
-The repo has 4 folders
+The repo has 5 folders
 
 - Group-Proposal: discussions, draft and final proposals
 - Code
