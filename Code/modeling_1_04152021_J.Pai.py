@@ -9,11 +9,11 @@ from statsmodels.stats.multicomp import pairwise_tukeyhsd
 from statsmodels.stats.proportion import proportions_ztest
 import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
-import plotly.figure_factory as ff
+#import plotly.express as px
+#import plotly.figure_factory as ff
 import warnings
 
-project = pd.read_csv('project.csv', encoding='ISO-8859-1')
+project = pd.read_csv('https://raw.githubusercontent.com/JichongWu/Final-Project-Group8/main/Data/project_04142021_J.Pai.csv')
 
 # KNN models with N=5, 10, and 15
 
@@ -49,7 +49,7 @@ model_year_encoded = le.fit_transform(project['MY_GROUP'])
 
 # Convert string labels of GENDER into numbers
 le = preprocessing.LabelEncoder()
-gender_encoded = le.fit_transform(project['GENDER'])
+gender_encoded = le.fit_transform(project['GENDER_GROUP'])
 
 # Convert string labels of AGE_GROUP into numbers
 le = preprocessing.LabelEncoder()
