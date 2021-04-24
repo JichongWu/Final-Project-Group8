@@ -1,0 +1,163 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+import warnings
+warnings.filterwarnings("ignore")
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import recall_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn import preprocessing
+from sklearn import tree
+import seaborn as sns
+from imblearn.over_sampling import SMOTE
+import collections, numpy
+
+url = 'https://github.com/JichongWu/Final-Project-Group8/blob/main/Data/project_04142021_J.Pai.csv?raw=true'
+project = pd.read_csv(url, encoding='ISO-8859-1')
+
+# Convert string labels of WEATHER_GROUP into numbers
+le = preprocessing.LabelEncoder()
+weather_encoded = le.fit_transform(project['WEATHER_GROUP'])
+
+# Convert string labels of LIGHT_GROUP into numbers
+le = preprocessing.LabelEncoder()
+light_encoded = le.fit_transform(project['LIGHT_GROUP'])
+
+# Convert string labels of SURFACE_GROUP into numbers
+le = preprocessing.LabelEncoder()
+surface_encoded = le.fit_transform(project['SURFACE_GROUP'])
+
+# Convert string labels of GRADE_GROUP into numbers
+le = preprocessing.LabelEncoder()
+grade_encoded = le.fit_transform(project['GRADE_GROUP'])
+
+# Convert string labels of VEHICLE_TYPE into numbers
+le = preprocessing.LabelEncoder()
+vehicle_encoded = le.fit_transform(project['VEHICLE_TYPE'])
+
+# Convert string labels of ALIGN_GROUP into numbers
+le = preprocessing.LabelEncoder()
+align_encoded = le.fit_transform(project['ALIGN_GROUP'])
+
+# Convert string labels of MY_GROUP into numbers
+le = preprocessing.LabelEncoder()
+model_year_encoded = le.fit_transform(project['MY_GROUP'])
+
+# Convert string labels of GENDER into numbers
+le = preprocessing.LabelEncoder()
+gender_encoded = le.fit_transform(project['GENDER_GROUP'])
+
+# Convert string labels of AGE_GROUP into numbers
+column = 'AGE'
+age_normal = (project[column] - project[column].min()) / (project[column].max() - project[column].min())
+
+X=list(zip(weather_encoded, light_encoded, surface_encoded, grade_encoded, vehicle_encoded, align_encoded, model_year_encoded,
+          gender_encoded,age_normal))
+
+X_names = ['weather_encoded', 'light_encoded', 'surface_encoded', 'grade_encoded', 'vehicle_encoded', 'align_encoded', 'model_year_encoded',
+          'gender_encoded','age_normal']
+
+le = preprocessing.LabelEncoder()
+y = le.fit_transform(project['ROLL'])
+print(y)
+
+
+# Logistic regression model
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+from sklearn.model_selection import train_test_split
+training_features, test_features, training_target, test_target = train_test_split(X, y, test_size = 0.3, random_state=12)
+
+logreg = LogisticRegression()
+logreg.fit(training_features, training_target)
+
+y_pred = logreg.predict(test_features)
+print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(logreg.score(test_features, test_target)))
+
+from sklearn.metrics import confusion_matrix
+confusion_matrix = confusion_matrix(test_target, y_pred)
+print(confusion_matrix)
+
+from sklearn.metrics import classification_report
+print(classification_report(test_target, y_pred))
+
+
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve
+logit_roc_auc = roc_auc_score(test_target, logreg.predict(test_features))
+fpr, tpr, thresholds = roc_curve(test_target, logreg.predict_proba(test_features)[:,1])
+plt.figure()
+plt.plot(fpr, tpr, label='Logistic Regression (area = %0.2f)' % logit_roc_auc)
+plt.plot([0, 1], [0, 1],'r--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver operating characteristic')
+plt.legend(loc="lower right")
+plt.savefig('Log_ROC')
+plt.show()
+
+
+#####Logistic Regression with Oversampling
+print("Before OverSampling, counts of label '1': {}".format(sum(training_target == 1)))
+print("Before OverSampling, counts of label '0': {} \n".format(sum(training_target == 0)))
+
+from imblearn.over_sampling import SMOTE
+from sklearn.model_selection import train_test_split
+training_features, test_features, training_target, test_target = train_test_split(X, y, test_size = 0.3, random_state=12)
+
+sm = SMOTE(random_state=2)
+X_train_res, y_train_res = sm.fit_sample(training_features, training_target.ravel())
+
+#print('After OverSampling, the shape of train_X: {}'.format(X_train_res.shape))
+#print('After OverSampling, the shape of train_y: {} \n'.format(y_train_res.shape))
+
+print("After OverSampling, counts of label '1': {}".format(sum(y_train_res == 1)))
+print("After OverSampling, counts of label '0': {}".format(sum(y_train_res == 0)))
+
+lr1 = LogisticRegression()
+lr1.fit(X_train_res, y_train_res.ravel())
+predictions = lr1.predict(test_features)
+
+# print classification report
+print(classification_report(test_target, predictions))
+
+
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve
+logit_roc_auc = roc_auc_score(test_target, lr1.predict(test_features))
+fpr, tpr, thresholds = roc_curve(test_target, lr1.predict_proba(test_features)[:,1])
+plt.figure()
+plt.plot(fpr, tpr, label='Logistic Regression (area = %0.2f)' % logit_roc_auc)
+plt.plot([0, 1], [0, 1],'r--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver operating characteristic w/oversampling')
+plt.legend(loc="lower right")
+plt.savefig('Log_ROC')
+plt.show()
+
+
+#Logistic Regression Model Importance
+from matplotlib import pyplot
+
+lr1 = LogisticRegression()
+lr1.fit(X_train_res, y_train_res.ravel())
+coefs = np.abs(lr1.coef_[0])
+indices = np.argsort(coefs)[::-1]
+
+names = list(X_names)
+print(names)
+plt.figure()
+plt.title("Feature importances (Logistic Regression)")
+plt.bar(range(9), coefs[indices[:9]],
+       color="r", align="center")
+plt.xticks(range(9), names, rotation=45, ha='right')
+plt.subplots_adjust(bottom=0.3)
+plt.show()
