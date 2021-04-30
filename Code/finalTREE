@@ -1,0 +1,63 @@
+###DECISION TREE####
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+import warnings
+warnings.filterwarnings("ignore")
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn import preprocessing
+from sklearn import tree
+import seaborn as sns
+import sklearn.metrics as metrics
+
+from sklearn.model_selection import GridSearchCV
+
+url = 'https://github.com/JichongWu/Final-Project-Group8/blob/main/Data/project_J.Pai.csv?raw=true'
+project = pd.read_csv(url, encoding='ISO-8859-1')
+print(project.head(5))
+list(project.columns.values)
+project.target = project.ROLL
+
+from sklearn import preprocessing
+from sklearn import tree
+import pydotplus
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+import matplotlib.image as pltimg
+
+le = preprocessing.LabelEncoder()
+encoded_df = (project.apply(le.fit_transform))
+features = ['WEATHER_GROUP', 'LIGHT_GROUP', 'SURFACE_GROUP', 'GRADE_GROUP','VEHICLE_TYPE','ALIGN_GROUP','SEX', 'AGE','MOD_YEAR']
+y = encoded_df['ROLL']
+X = pd.DataFrame(encoded_df[features])
+y = pd.DataFrame(encoded_df['ROLL'])
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3)
+
+
+X_newtree = X_train.to_numpy()
+y_newtree = y_train.to_numpy()
+
+from dtreeviz.trees import dtreeviz # remember to load the package
+
+parameters = {'max_depth':range(3,20)}
+clf_entropy = tree.DecisionTreeClassifier(criterion="entropy", random_state=100, splitter = "best", max_depth=3, min_samples_leaf=5)
+clf_entropy = clf_entropy.fit(X_train, y_train)
+
+
+data = tree.export_graphviz(clf_entropy, out_file=None, feature_names=features)
+graph = pydotplus.graph_from_dot_data(data)
+graph.write_png('mydecisiontree.png')
+
+img=pltimg.imread('mydecisiontree.png')
+imgplot = plt.imshow(img)
+plt.show()
+
+
