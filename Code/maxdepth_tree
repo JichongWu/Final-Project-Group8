@@ -82,3 +82,55 @@ importances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(clf_
 importances = importances.sort_values('importance',ascending=False)
 print(importances)
 
+
+##OVERFITTING 
+
+
+####OVERFITTING AUC GRAPH
+le = preprocessing.LabelEncoder()
+encoded_df = (project.apply(le.fit_transform))
+features = ['WEATHER_GROUP', 'LIGHT_GROUP', 'SURFACE_GROUP', 'GRADE_GROUP','VEHICLE_TYPE','ALIGN_GROUP','SEX', 'AGE','MY_GROUP']
+y = encoded_df['ROLL']
+X = pd.DataFrame(encoded_df[features])
+y = pd.DataFrame(encoded_df['ROLL'])
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3)
+
+
+dt= DecisionTreeClassifier()
+dt.fit(X_train, y_train)
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None, max_features=None, max_leaf_nodes=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, random_state=8, splitter='best')
+
+y_pred = dt.predict(X_test)
+
+from sklearn.metrics import roc_curve, auc
+false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, y_pred)
+roc_auc = auc(false_positive_rate, true_positive_rate)
+
+max_depths = np.linspace(1, 20, 20, endpoint=True)
+train_results = []
+test_results = []
+for max_depth in max_depths:
+   dt = DecisionTreeClassifier(max_depth=max_depth)
+   dt.fit(X_train, y_train)
+   train_pred = dt.predict(X_train)
+   false_positive_rate, true_positive_rate, thresholds = roc_curve(y_train, train_pred)
+   roc_auc = auc(false_positive_rate, true_positive_rate)
+   # Add auc score to previous train results
+   train_results.append(roc_auc)
+   y_pred = dt.predict(X_test)
+   false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, y_pred)
+   roc_auc = auc(false_positive_rate, true_positive_rate)
+   # Add auc score to previous test results
+   test_results.append(roc_auc)
+
+from matplotlib.legend_handler import HandlerLine2D
+line1, = plt.plot(max_depths, train_results, 'b', label="Train AUC")
+line2, = plt.plot(max_depths, test_results, 'r', label="Test AUC")
+plt.legend(handler_map={line1: HandlerLine2D(numpoints=2)})
+plt.ylabel('AUC score')
+plt.xlabel('Tree depth')
+plt.show()
+
