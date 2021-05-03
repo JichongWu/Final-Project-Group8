@@ -79,3 +79,8 @@ plt.plot(max_depth,acc_gini, data=d)
 plt.plot(max_depth,acc_entropy, data=d)
 plt.legend()
 
+##FEATURE IMPORTNACE 
+importances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(clf_entropy.feature_importances_,3)})
+importances = importances.sort_values('importance',ascending=False)
+print(importances)
+
