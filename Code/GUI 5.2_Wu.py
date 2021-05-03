@@ -120,10 +120,6 @@ for var in cat_vars_2:
 data_vars_2 = project_logit_2.columns.values.tolist()
 to_keep = [i for i in data_vars_2 if i not in cat_vars_2]
 data_final_2 = project_logit_2[to_keep]
-#=======================================
-#=======================================
-
-model_list = ['Decision Tree','Random Forest','Logistic Regression','KNN']
 
 #=========================================================
 #=========================================================
@@ -131,64 +127,11 @@ model_list = ['Decision Tree','Random Forest','Logistic Regression','KNN']
 #=========================================================
 #=========================================================
 
-class ModelCompare(QMainWindow):
-    send_fig = pyqtSignal(str)
 
-    def __init__(self):
-        super(ModelCompare, self).__init__()
-        self.Title = 'Model Comparison'
-        self.setWindowTitle(self.Title)
-        self.resize(1200, 800)  # Resize the window
-        self.statusBar().setStyleSheet("background-color: darkgreen")  # status bar
-        self.setStyleSheet("background-color: lavenderblush")
+#=========================================================
+# Under the 'Model' Menu
+#=========================================================
 
-        self.main_widget = QWidget(self)
-        # create grid layout
-        self.layout = QGridLayout(self.main_widget)
-        # create groupbox 1
-        self.groupBox1 = QGroupBox('Rollover Models Built by Team 8')
-        self.groupBox1Layout = QGridLayout()
-        self.groupBox1.setLayout(self.groupBox1Layout)
-
-        self.model0 = QCheckBox(model_list[0],self)
-        self.model1 = QCheckBox(model_list[1],self)
-        self.model2 = QCheckBox(model_list[2],self)
-        self.model3 = QCheckBox(model_list[3],self)
-
-        # add checkbox to layout
-        self.groupBox1Layout.addWidget(self.model0,0,0)
-        self.groupBox1Layout.addWidget(self.model1,0,1)
-        self.groupBox1Layout.addWidget(self.model2,1,0)
-        self.groupBox1Layout.addWidget(self.model3,1,1)
-
-        # add test split label input
-        self.lblPercentTest = QLabel('Test Dataset Split (%):')
-        self.txtPercentTest = QLineEdit(self)
-        self.txtPercentTest.setStyleSheet("background-color: white")
-        # add Execute button
-        self.btnExecute = QPushButton("Run Selected Models")
-        self.btnExecute.setStyleSheet("background-color: khaki")
-        # add view tree button
-        self.btnDTFigure = QPushButton("Display the Accuracy Ranking")
-        self.btnDTFigure.setStyleSheet("background-color: khaki")
-        #self.btnDTFigure.clicked.connect(self.view_tree)        # update
-
-        # add these labels above
-        self.groupBox1Layout.addWidget(self.lblPercentTest,2,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,3,0)
-        self.groupBox1Layout.addWidget(self.btnExecute,4,0)
-        self.groupBox1Layout.addWidget(self.btnDTFigure,5,0)
-
-        # groupbox layout
-
-        self.layout.addWidget(self.groupBox1, 0, 0)
-       # self.layout.addWidget(self.groupBoxG1, 0, 1)
-       # self.layout.addWidget(self.groupBox2, 1, 0)
-       # self.layout.addWidget(self.groupBoxG2, 1, 1)
-
-        self.setCentralWidget(self.main_widget)  # Creates the window with all the elements
-        self.resize(1200, 1000)
-        self.show()
 
 class RandomForest(QMainWindow):
     send_fig = pyqtSignal(str)
@@ -197,7 +140,7 @@ class RandomForest(QMainWindow):
         super(RandomForest, self).__init__()
         self.Title = 'Random Forest'
         self.setWindowTitle(self.Title)
-        self.statusBar().setStyleSheet("background-color: tomato")  # status bar
+        self.statusBar().setStyleSheet('background-color: tomato')  # status bar
         self.setStyleSheet("background-color: lavenderblush")  # background color
 
         self.main_widget = QWidget(self)
@@ -206,7 +149,7 @@ class RandomForest(QMainWindow):
 
         #==============================
         # create groupbox 1
-        self.groupBox1 = QGroupBox('Decision Tree Model Features')
+        self.groupBox1 = QGroupBox('Random Forest Model Features')
         self.groupBox1.setStyleSheet('font-size: 20px;font-weight: bold; color: red')
         self.groupBox1Layout = QVBoxLayout()
         self.groupBox1.setLayout(self.groupBox1Layout)
@@ -363,7 +306,7 @@ class RandomForest(QMainWindow):
 
         # Creates the window with all the elements
         self.setCentralWidget(self.main_widget)
-        self.resize(1500, 900)
+        self.resize(1700, 900)
         self.show()
 
     def update(self):
@@ -374,15 +317,14 @@ class RandomForest(QMainWindow):
         self.txtClassification.setUndoRedoEnabled(False)
 
         # process the parameters
-        #################
-        ###################
-        #################
-        ###################
-        #################
-        ###################
-        #################
-        ###################
-        '''
+        feature_list = ['AGE', 'WEATHER_GROUP_CLEAR/NORMAL', 'WEATHER_GROUP_FOG/CLOUDY', 'WEATHER_GROUP_RAIN/SLEET',
+                        'WEATHER_GROUP_SNOW',
+                        'LIGHT_Condition_DAWN/DUSK', 'LIGHT_Condition_LIGHT', 'ROAD_SURFACE_DRY', 'ROAD_SURFACE_WET',
+                        'ROADWAY_GRADE_LEVEL',
+                        'ROADWAY_ALIGNMENT_STRAIGHT', 'VEHICLE_TYPE_CAR', 'VEHICLE_TYPE_PICKUP', 'VEHICLE_TYPE_VAN',
+                        'VEHICLE_YEAR_2008-2019',
+                        'VEHICLE_YEAR_2011-2019', 'GENDER_FEMALE']
+
         self.F_List = pd.DataFrame([])
         feature_list = ['AGE', 'WEATHER_GROUP_CLEAR/NORMAL','WEATHER_GROUP_FOG/CLOUDY','WEATHER_GROUP_RAIN/SLEET','WEATHER_GROUP_SNOW',
                         'LIGHT_Condition_DAWN/DUSK','LIGHT_Condition_LIGHT','ROAD_SURFACE_DRY','ROAD_SURFACE_WET','ROADWAY_GRADE_LEVEL',
@@ -490,12 +432,6 @@ class RandomForest(QMainWindow):
                 self.F_List = data_final[feature_list[16]]
             else:
                 self.F_List = pd.concat([self.F_List, data_final[feature_list[16]]], axis=1)
-        '''
-        ##########################
-        ##########################
-        ##########################
-        ##########################
-        ##########################
 
         Xysplit = float(self.txtPercentTest.text()) / 100
         n = int(self.txttreeN.text())
@@ -503,17 +439,16 @@ class RandomForest(QMainWindow):
         # ==========================
         # Build the model
         # ==========================
-        #X = self.F_List
+        #feature_list = ['AGE', 'WEATHER_GROUP_CLEAR/NORMAL', 'WEATHER_GROUP_FOG/CLOUDY', 'WEATHER_GROUP_RAIN/SLEET',
+        #            'WEATHER_GROUP_SNOW',
+         #           'LIGHT_Condition_DAWN/DUSK', 'LIGHT_Condition_LIGHT', 'ROAD_SURFACE_DRY', 'ROAD_SURFACE_WET',
+          #          'ROADWAY_GRADE_LEVEL',
+          #          'ROADWAY_ALIGNMENT_STRAIGHT', 'VEHICLE_TYPE_CAR', 'VEHICLE_TYPE_PICKUP', 'VEHICLE_TYPE_VAN',
+          #          'VEHICLE_YEAR_2008-2019',
+          #          'VEHICLE_YEAR_2011-2019', 'GENDER_FEMALE']
 
-        feature_list = ['AGE', 'WEATHER_GROUP_CLEAR/NORMAL', 'WEATHER_GROUP_FOG/CLOUDY', 'WEATHER_GROUP_RAIN/SLEET',
-                    'WEATHER_GROUP_SNOW',
-                    'LIGHT_Condition_DAWN/DUSK', 'LIGHT_Condition_LIGHT', 'ROAD_SURFACE_DRY', 'ROAD_SURFACE_WET',
-                    'ROADWAY_GRADE_LEVEL',
-                    'ROADWAY_ALIGNMENT_STRAIGHT', 'VEHICLE_TYPE_CAR', 'VEHICLE_TYPE_PICKUP', 'VEHICLE_TYPE_VAN',
-                    'VEHICLE_YEAR_2008-2019',
-                    'VEHICLE_YEAR_2011-2019', 'GENDER_FEMALE']
-
-        X = data_final[feature_list]
+        X = self.F_List
+        #X = data_final[feature_list]
         y = le.fit_transform(project['ROLL'])
 
         # split X and y
@@ -540,6 +475,7 @@ class RandomForest(QMainWindow):
         # accuracy score
         self.accuracy_score = accuracy_score(y_test, y_pred) * 100
         self.txtAccuracy.setText(str(self.accuracy_score))
+        ACC_Forest = self.accuracy_score
 
         # ==============================================
         # Chart 1 -- Confusion Matrix
@@ -559,11 +495,27 @@ class RandomForest(QMainWindow):
 
         self.fig.tight_layout()
         self.fig.canvas.draw_idle()
-        '''
+
+        # ====================================
+        # Chart 2 - Feature Importance
+        # ====================================
+
+        importances = self.clf.feature_importances_
+        f_importances = pd.Series(importances, X.columns)
+        f_importances.sort_values(ascending=True, inplace=True)
+
+        X_Features = f_importances.index
+        y_Importance = list(f_importances)
+
+        self.ax2.barh(X_Features, y_Importance)
+        self.ax2.set_title('Feature Importance')
+
+        self.fig2.tight_layout()
+        self.fig2.canvas.draw_idle()
+
         # ====================================
         # Chart 3 - ROC Cure
         # ====================================
-        '''
         y_pred_proba = self.clf.predict_proba(X_test)
         fpr, tpr, _ = roc_curve(y_test, y_pred_proba[:, 1])
         auc = roc_auc_score(y_test, y_pred_proba[:, 1])
@@ -582,27 +534,36 @@ class KNNmodel(QMainWindow):
         super(KNNmodel, self).__init__()
         self.Title = 'K-Nearest Neighbors (KNN)'
         self.setWindowTitle(self.Title)
-        self.statusBar().setStyleSheet("background-color: tomato")  # status bar
-        self.setStyleSheet("background-color: lavenderblush")  # background color
+        self.statusBar().setStyleSheet('background-color: tomato')  # status bar
+        self.setStyleSheet('background-color: lavenderblush')  # background color
         self.main_widget = QWidget(self)
         # create H-layout layout
         self.layout = QHBoxLayout(self.main_widget)
         # create groupbox1 layout
         self.groupBox1 = QGroupBox('KNN Model Features')
-        self.groupBox1.setStyleSheet('font-size: 20px; font-weight: bold; color: black')
+        self.groupBox1.setStyleSheet('font-size: 20px; font-weight: bold; color: red')
         self.groupBox1Layout = QVBoxLayout()
         self.groupBox1.setLayout(self.groupBox1Layout)
 
         # create checkbox
         self.x1 = QCheckBox('F1: Weather', self)
+        self.x1.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x2 = QCheckBox('F2: Light Condition', self)
+        self.x2.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x3 = QCheckBox('F3: Road Surface', self)
+        self.x3.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x4 = QCheckBox('F4: Roadway Grade', self)
+        self.x4.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x5 = QCheckBox('F5: Vehicle Type', self)
+        self.x5.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x6 = QCheckBox('F6: Roadway Alignment', self)
+        self.x6.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x7 = QCheckBox('F7: LIGHT_GROUP_LIGHT', self)
+        self.x7.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x8 = QCheckBox('F8: Vehicle Year', self)
+        self.x8.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x9 = QCheckBox('F9: Gender', self)
+        self.x9.setStyleSheet('font-size: 15px; font-weight: bold; color: black')
         self.x1.setChecked(True)
         self.x2.setChecked(True)
         self.x3.setChecked(True)
@@ -859,6 +820,9 @@ class KNNmodel(QMainWindow):
         self.acc_score0 = sum(self.acc_score10) / 10
         self.txtAccuracy0.setText(str(self.acc_score0))
 
+        # grab the accuracy score for comparison
+        ACC_KNN = self.acc_score0
+
 class LogRegression(QMainWindow):
     send_fig = pyqtSignal(str)
 
@@ -935,7 +899,7 @@ class LogRegression(QMainWindow):
 
         # create Execute button
         self.btnExecute = QPushButton("Run Selected Features")
-        self.btnExecute.setStyleSheet('font-size: 15px; font-weight: bold; color: black; background-color: aquamarine')
+        self.btnExecute.setStyleSheet('font-size: 20px; font-weight: bold; color: black; background-color: aquamarine')
         self.btnExecute.clicked.connect(self.update)
 
         # add checkbox to layout
@@ -1091,6 +1055,9 @@ class LogRegression(QMainWindow):
             self.acc_score0 = sum(self.acc_score10) / 10
             self.txtAccuracy0.setText(str(self.acc_score0))
 
+            # grab the accuracy score for comparison
+            ACC_Logit = self.acc_score0
+
         #::=====================================
         #::=====================================
         #::=====================================
@@ -1174,6 +1141,11 @@ class DecisionTree(QMainWindow):
         self.resize(1200, 800)  # Resize the window
         self.statusBar().setStyleSheet("background-color: tomato")  # status bar
         self.setStyleSheet("background-color: lavenderblush")        # background color
+
+        # pass the ACC scores to model comparison windows
+       # self.model_compare = ModelCompare()
+        #=========================================
+        #=========================================
 
         self.main_widget = QWidget(self)
         # create grid layout
@@ -1273,10 +1245,17 @@ class DecisionTree(QMainWindow):
         self.txtAccuracy = QLineEdit()
         self.txtAccuracy.setStyleSheet('font-size: 20px;font-weight: bold; color: black;background-color: white')
 
+        #=====
+       # self.btnPassK = QPushButton('Grab Accuracy')
+      #  self.btnPassK.setStyleSheet('font-size: 15px; color:black;background-color: aquamarine')
+      #  self.btnPassK.clicked.connect(self.passValue)
+        #=====
+
         self.groupBox2Layout.addWidget(self.lblResults)
         self.groupBox2Layout.addWidget(self.txtResults)
         self.groupBox2Layout.addWidget(self.lblAccuracy)
         self.groupBox2Layout.addWidget(self.txtAccuracy)
+       # self.groupBox2Layout.addWidget(self.btnPassK)
 
         #:==========================================
         # Chart 1 : Confusion Matrix
@@ -1454,6 +1433,59 @@ class DecisionTree(QMainWindow):
         graph.write_pdf("decision_tree_entropy.pdf")
         webbrowser.open_new(r'decision_tree_entropy.pdf')
 
+  #  def passValue(self):
+   #     self.model_compare.txtACC_TREE.setText(str(self.accuracy_score))
+
+#========================================
+#========================================
+class ModelCompare(QMainWindow):
+    send_fig = pyqtSignal(str)
+
+    def __init__(self):
+        super(ModelCompare, self).__init__()
+        self.Title = 'Missing Value Summary'
+        self.setWindowTitle(self.Title)
+        self.main_widget = QWidget(self)
+        self.statusBar().setStyleSheet('background-color: tomato')  # status bar
+        self.setStyleSheet('background-color: lavenderblush')  # background color
+        self.layout = QVBoxLayout(self.main_widget)
+
+       # self.txtACC_TREE = QLineEdit()
+
+        self.fig = Figure()
+        self.ax1 = self.fig.add_subplot(111)
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.canvas.updateGeometry()
+
+        # ACC scores
+        ACC_Forest = 63.60157386945507
+        ACC_TREE = 67.55780736269067
+        ACC_Logit = 68.06969471248583
+        ACC_KNN = 67.53142574538137
+
+        SCORES = [ACC_Forest, ACC_TREE, ACC_Logit, ACC_KNN]
+        SCORES.sort()
+        Models = ['Random Forest','KNN','Decision Tree','Logistic Regression']
+
+        self.ax1.barh(Models, SCORES, 0.6, color='turquoise', edgecolor = 'lightcoral', lw=6)
+
+        for i, v in enumerate(SCORES):
+            self.ax1.text(v + .1, i - .1, str(round(v,2)) + '%', color='black', fontweight='bold', fontsize='20')
+
+        self.ax1.set_title('Model Accuracy Score Ranking', fontsize= 25, fontweight='bold')
+        self.ax1.set_xlabel('Model', fontsize=25, fontweight='bold')
+        #self.ax1.set_yticklabels(fontsize=20)
+        self.ax1.set_ylabel('Accuracy Score', fontsize=25, fontweight='bold')
+
+        self.fig.canvas.draw_idle()
+
+        self.layout.addWidget(self.canvas)
+
+        self.setCentralWidget(self.main_widget)  # Creates the window with all the elements
+        self.resize(1500, 900)  # Resize the window
+        self.show()
+
 #========================================
 #========================================
 # The "About" menu
@@ -1471,12 +1503,12 @@ class TEAM(QMainWindow):
         self.setWindowTitle(self.Title)
         self.resize(1000, 900)
         self.setStyleSheet('background-color: black')
-        self.label1 = QLabel('Jia-ern Pai')
-        self.label1.setStyleSheet('font-size: 50px;background-color: lightcyan')
+        self.label1 = QLabel('Jia-Ern Pai')
+        self.label1.setStyleSheet('font-size: 70px; font-weight: bold; background-color: lightcyan')
         self.label2 = QLabel('Ethan Litman')
-        self.label2.setStyleSheet('font-size: 50px; background-color: lightyellow')
+        self.label2.setStyleSheet('font-size: 70px; font-weight: bold; background-color: lightyellow')
         self.label3 = QLabel('Jichong Wu')
-        self.label3.setStyleSheet('font-size: 50px; background-color: salmon')
+        self.label3.setStyleSheet('font-size: 70px; font-weight: bold; background-color: salmon')
 
         self.label1.setAlignment(QtCore.Qt.AlignTop)
         self.label2.setAlignment(QtCore.Qt.AlignCenter)
@@ -1546,7 +1578,6 @@ class MissingValue(QMainWindow):
         self.ax1.set_xlabel('# of Missing Values')
         self.ax1.set_ylabel('Features')
 
-        self.fig.tight_layout()
         self.fig.canvas.draw_idle()
         self.layout.addWidget(self.canvas)
         self.setCentralWidget(self.main_widget)       # Creates the window with all the elements
@@ -1662,7 +1693,7 @@ class FeatureVRollover(QMainWindow):
 
     def __init__(self):
         super(FeatureVRollover, self).__init__()
-        self.Title = "Features vs Rollover"
+        self.Title = 'Rollover (Target) vs Features'
         self.setWindowTitle(self.Title)
         self.resize(900, 900)
         self.statusBar().setStyleSheet('background-color: teal')  # status bar
@@ -1829,7 +1860,7 @@ class CarRollover(QMainWindow):
         EDAMenu.addAction(countButton)
 
         ## Features vs Rollover button
-        fvrButton = QAction('Features vs Rollover', self)
+        fvrButton = QAction('Rollover (Target) vs Features', self)
         fvrButton.setStatusTip('Exam relationship between each of the 9 features and rollover over 2014-2018')
         fvrButton.triggered.connect(self.FvR)
         EDAMenu.addAction(fvrButton)
