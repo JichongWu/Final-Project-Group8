@@ -7,7 +7,7 @@ import math
 import warnings
 warnings.filterwarnings("ignore")
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_splitf
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn import preprocessing
@@ -51,7 +51,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3)
 # define the model
 model = RandomForestClassifier()
 # evaluate the model
-cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=8)
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, 
+=8)
 n_scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1, error_score='raise')
 # report performance
 print('Accuracy: %.3f (%.3f)' % (mean(n_scores), std(n_scores)))
@@ -83,7 +84,7 @@ def get_models():
 # evaluate a given model using cross-validation
 def evaluate_model(model, X, y):
 	# define the evaluation procedure
-	cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+	cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=8)
 	# evaluate the model and collect the results
 	scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1)
 	return scores
