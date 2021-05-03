@@ -1,0 +1,203 @@
+#This is code for random forest
+#I only used 9 features. You can add more if you woud like 
+#I did not do k-fold analysis on this
+#Below there are several codes for hyper-parameters 
+
+url = 'https://github.com/JichongWu/Final-Project-Group8/blob/main/Data/project_original_J.Pai.csv?raw=true'
+project = pd.read_csv(url, encoding='ISO-8859-1')
+print(project.head(5))
+list(project.columns.values)
+project.target = project.ROLL
+
+from sklearn import preprocessing
+from sklearn import tree
+import pydotplus
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+import matplotlib.image as pltimg
+from numpy import mean
+from numpy import std
+from sklearn.datasets import make_classification
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+
+le = preprocessing.LabelEncoder()
+encoded_df = (project.apply(le.fit_transform))
+features = ['WEATHER_GROUP', 'LIGHT_GROUP', 'SURFACE_GROUP', 'GRADE_GROUP','VEHICLE_TYPE','ALIGN_GROUP','SEX', 'AGE','MY_GROUP']
+y = encoded_df['ROLL']
+X = pd.DataFrame(encoded_df[features])
+y = pd.DataFrame(encoded_df['ROLL'])
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3)
+
+# define the model
+model = RandomForestClassifier()
+# evaluate the model
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=8)
+n_scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1, error_score='raise')
+# report performance
+print('Accuracy: %.3f (%.3f)' % (mean(n_scores), std(n_scores)))
+
+
+# explore random forest bootstrap sample size on performance
+#This will tell you how much accuracy you gain by adding samples 
+from numpy import mean
+from numpy import std
+from numpy import arange
+from sklearn.datasets import make_classification
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from matplotlib import pyplot
+
+# get the dataset
+#This is using 50,000 random samples form our dataset which can take a long time to run. 
+#Decreasing sample size should decrease CPU requirement 
+def get_dataset():
+	X, y = make_classification(n_samples=50000, n_features=9, n_informative=9, n_redundant=0, random_state=8)
+	return X, y
+
+# get a list of models to evaluate
+def get_models():
+	models = dict()
+	# explore ratios from 10% to 100% in 10% increments
+	for i in arange(0.1, 1.1, 0.1):
+		key = '%.1f' % i
+		# set max_samples=None to use 100%
+		if i == 1.0:
+			i = None
+		models[key] = RandomForestClassifier(max_samples=i)
+	return models
+
+# evaluate a given model using cross-validation
+def evaluate_model(model, X, y):
+	# define the evaluation procedure
+	cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+	# evaluate the model and collect the results
+	scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1)
+	return scores
+
+# define dataset
+X, y = get_dataset()
+# get the models to evaluate
+models = get_models()
+# evaluate the models and store results
+results, names = list(), list()
+for name, model in models.items():
+	# evaluate the model
+	scores = evaluate_model(model, X, y)
+	# store the results
+	results.append(scores)
+	names.append(name)
+	# summarize the performance along the way
+	print(">%s %.3f (%.3f)" % (name, mean(scores), std(scores)))
+# plot model performance for comparison
+pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.show()
+
+
+
+
+# explore random forest number of features effect on performance
+##How many features from 1 to 9
+
+from numpy import mean
+from numpy import std
+from sklearn.datasets import make_classification
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from matplotlib import pyplot
+
+# get the dataset
+def get_dataset():
+	X, y = make_classification(n_samples=1000, n_features=20, n_informative=15, n_redundant=5, random_state=3)
+	return X, y
+
+# get a list of models to evaluate
+def get_models():
+	models = dict()
+	# explore number of features from 1 to 9
+	for i in range(1,10):
+		models[str(i)] = RandomForestClassifier(max_features=i)
+	return models
+
+# evaluate a given model using cross-validation
+def evaluate_model(model, X, y):
+	# define the evaluation procedure
+	cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=8)
+	# evaluate the model and collect the results
+	scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1)
+	return scores
+
+# define dataset
+X, y = get_dataset()
+# get the models to evaluate
+models = get_models()
+# evaluate the models and store results
+results, names = list(), list()
+for name, model in models.items():
+	# evaluate the model
+	scores = evaluate_model(model, X, y)
+	# store the results
+	results.append(scores)
+	names.append(name)
+	# summarize the performance along the way
+	print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
+# plot model performance for comparison
+pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.show()
+
+
+
+# explore random forest tree depth effect on performance from 1 to 29
+from numpy import mean
+from numpy import std
+from sklearn.datasets import make_classification
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from matplotlib import pyplot
+
+# get the dataset
+def get_dataset():
+	X, y = make_classification(n_samples=1000, n_features=20, n_informative=15, n_redundant=5, random_state=3)
+	return X, y
+
+# get a list of models to evaluate
+def get_models():
+	models = dict()
+	# consider tree depths from 1 to 30 and None=full
+	depths = [i for i in range(1,8)] + [None]
+	for n in depths:
+		models[str(n)] = RandomForestClassifier(max_depth=n)
+	return models
+
+# evaluate a given model using cross-validation
+def evaluate_model(model, X, y):
+	# define the evaluation procedure
+	cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=8)
+	# evaluate the model and collect the results
+	scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1)
+	return scores
+
+# define dataset
+X, y = get_dataset()
+# get the models to evaluate
+models = get_models()
+# evaluate the models and store results
+results, names = list(), list()
+for name, model in models.items():
+	# evaluate the model
+	scores = evaluate_model(model, X, y)
+	# store the results
+	results.append(scores)
+	names.append(name)
+	# summarize the performance along the way
+	print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
+# plot model performance for comparison
+pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.show()
