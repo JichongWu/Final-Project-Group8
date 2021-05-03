@@ -10,3 +10,7 @@ clf_entropy_smote = tree.DecisionTreeClassifier(criterion="entropy", random_stat
 clf_entropy_smote = clf_entropy.fit(X_train_res, y_train_res)
 y_pred = clf_entropy_smote.predict(X_test)
 print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+
+importances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(clf_entropy.feature_importances_,3)})
+importances = importances.sort_values('importance',ascending=False)
+print(importances)
