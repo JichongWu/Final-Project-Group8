@@ -1,0 +1,12 @@
+#Code for oversampling using SMOTE algorithm 
+
+from imblearn.over_sampling import SMOTE
+
+sm = SMOTE(random_state=2)
+X_train_res, y_train_res = sm.fit_sample(X_train, y_train)
+
+
+clf_entropy_smote = tree.DecisionTreeClassifier(criterion="entropy", random_state=8, splitter = "best", max_depth=9, min_samples_leaf=5)
+clf_entropy_smote = clf_entropy.fit(X_train_res, y_train_res)
+y_pred = clf_entropy_smote.predict(X_test)
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
