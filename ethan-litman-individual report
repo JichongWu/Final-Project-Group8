@@ -1,0 +1,35 @@
+6103 Data Mining – Group Project Group 8 Individual 
+
+
+
+Final Report: Ethan Litman 
+
+
+
+
+1.	Introduction Thousands of vehicles involved rollovers in fatal traffic crashes every year. The rollover is one of the significant safety problems in fatal crashes. The National Highway Traffic Safety Administration (NHTSA) indicated that 18.9 percent fatal crashes in 2014 (7,592 of 40,164) involved rollovers. Occupants in a rollover crash have greater likelihood of experiencing fatal injuries than occupants in non-rollover crash. Reducing rollovers in traffic crashes will decrease fatalities. The purpose of this project is to predict rollovers in fatal single-passenger-vehicle crashes. 
+
+
+
+Outline of Teamwork Responsibilities: 
+
+• Jia-ern Pai: data cleaning, KNN model, and Logistic Regression model 
+• Ethan Litman: data cleaning, Decision Tree model and Random Forest model 
+• Jichong Wu: Random Forest model and GUI design
+
+
+Outline of Individual Responsibilities: 
+
+•	Data cleaning and EDTA
+o	Chi-squared analysis, histograms
+•	Decision tree algorithm
+o	Optimization of max_depth and feature importance 
+o	Developed strategy for over sampling of minority class
+•	Random Forest algorithm 
+o	Optimization (n_estimators loop, depth) and k-fold analysis 
+•	Assisted with logistic regression 
+
+Estimation of code contribution 20-25%
+
+Please see final report for the specific sections outlined above and GitHub Respository for code contributions. 
+
